@@ -56,50 +56,22 @@ String name1;
             @Override
             public void onClick(View v) {
                  s1=group.getText().toString();
-               /* ref.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        String s2=dataSnapshot.getKey();
-                        if(s2==s1) {
-                            flag = true;
-                            ref1= FirebaseDatabase.getInstance().getReference("Groups").child(s1);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-                if(!flag)
-                {
-                    Toast.makeText(JoinGroup.this, "No group found", Toast.LENGTH_SHORT).show();
-                }*/
-              //  else
-               // {
+              
 
                 ref1= FirebaseDatabase.getInstance().getReference("Groups").child(s1);
-                ref1.addListenerForSingleValueEvent(new ValueEventListener() {
+                DatabaseReference reg2 = ref1.push();
+                
+                Map<Object,String> mp =new HashMap<>();
+                mp.put("id",user.getUid().toString());
+                reg2.setValue(mp).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for(DataSnapshot d:dataSnapshot.getChildren())
-                        {
-                            String p1=d.getValue().toString();
-                            Group_information g=new Group_information(p1);
-                            x.add(g);
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isComplete()){
+                            Toast.makeText(JoinGroup.this, "Successfully addedd", Toast.LENGTH_SHORT).show();
+                        }else{
+                            Toast.makeText(JoinGroup.this, task.getException().toString(), Toast.LENGTH_SHORT).show();
                         }
-                        Group_information g=new Group_information(name1);
-                        x.add(g);
-                        ref1.setValue(x);
-                        Toast.makeText(JoinGroup.this, "Group Joined",
-                                Toast.LENGTH_SHORT).show();
-
                     }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-
                 });
 
 
